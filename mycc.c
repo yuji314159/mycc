@@ -24,6 +24,14 @@ void error_at(char *loc, char *fmt, ...) {
     exit(1);
 }
 
+int len_locals() {
+    int len = 0;
+    for (LVar *var = locals; var; var = var->next) {
+        len += 1;
+    }
+    return len;
+}
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         fprintf(stderr, "引数の数が正しくありません\n");
@@ -32,7 +40,9 @@ int main(int argc, char **argv) {
 
     user_input = argv[1];
     token = tokenize(argv[1]);
+    // fprintf(stderr, "# tokenize OK\n");
     program();
+    // fprintf(stderr, "# program OK\n");
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
@@ -40,7 +50,7 @@ int main(int argc, char **argv) {
 
     printf("    push rbp\n");
     printf("    mov rbp, rsp\n");
-    printf("    sub rsp, %d\n", 8 * 26);
+    printf("    sub rsp, %d\n", 8 * len_locals());
 
     for (int i = 0; code[i]; ++i) {
         gen(code[i]);

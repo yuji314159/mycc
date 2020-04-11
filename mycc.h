@@ -41,9 +41,19 @@ struct Node {
     int offset;
 };
 
+typedef struct LVar LVar;
+
+struct LVar {
+    LVar *next;
+    char *name;
+    int len;
+    int offset;
+};
+
 extern Token *token;
 extern char *user_input;
 extern Node *code[100];
+extern LVar *locals;
 
 void error(char *fmt, ...);
 void error_at(char *loc, char *fmt, ...);

@@ -9,6 +9,7 @@
 Token *token;
 char *user_input;
 Node *code[100];
+LVar *locals;
 
 bool consume(char *op) {
     if (token->type != TK_RESERVED || strlen(op) != token->len || memcmp(token->str, op, token->len)) {
@@ -73,8 +74,10 @@ Token *tokenize(char *p) {
             cur = new_token(TK_RESERVED, cur, p, 1);
             p += 1;
         } else if ('a' <= *p && *p <= 'z') {
-            cur = new_token(TK_IDENT, cur, p, 1);
-            p += 1;
+            int i = 1;
+            for (; 'a' <= p[i] && p[i] <= 'z' || 'A' <= p[i] && p[i] <= 'Z' || isdigit(p[i]) || p[i] == '_'; ++i) {}
+            cur = new_token(TK_IDENT, cur, p, i);
+            p += i;
         } else if (isdigit(*p)) {
             cur = new_token(TK_NUM, cur, p, 0);
             cur->val = strtol(p, &p, 10);
@@ -85,6 +88,15 @@ Token *tokenize(char *p) {
 
     new_token(TK_EOF, cur, p, 0);
     return head.next;
+}
+
+LVar *find_lvar(Token *tok) {
+    for (LVar *var = locals; var; var = var->next) {
+        if (var->len == tok->len && memcmp(tok->str, var->name, var->len) == 0) {
+            return var;
+        }
+    }
+    return NULL;
 }
 
 Node *new_node(NodeType type, Node *lhs, Node *rhs) {
@@ -115,7 +127,19 @@ Node *primary() {
     if (tok) {
         Node *node = calloc(1, sizeof(Node));
         node->type = ND_LVAR;
-        node->offset = (tok->str[0] - 'a' + 1) * 8;
+
+        LVar *lvar = find_lvar(tok);
+        if (lvar) {
+            node->offset = lvar->offset;
+        } else {
+            lvar = calloc(1, sizeof(LVar));
+            lvar->next = locals;
+            lvar->name = tok->str;
+            lvar->len = tok->len;
+            lvar->offset = (locals ? locals->offset : 0) + 8;
+            node->offset = lvar->offset;
+            locals = lvar;
+        }
         return node;
     }
 

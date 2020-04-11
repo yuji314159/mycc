@@ -32,5 +32,6 @@ assert 1 "0 <= 1;"
 assert 0 "0 >= 1;"
 assert 1 "(1 + 2 < 1 * 2) == (2 + 3 > 2 * 3);"
 assert 4 "a = b = 2; a + b;"
+assert 6 "foo = 1; bar = 2 + 3; foo + bar;"
 
 echo OK
