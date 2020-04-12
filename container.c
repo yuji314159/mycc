@@ -18,6 +18,14 @@ bool consume(char *op) {
     return true;
 }
 
+bool consume_return() {
+    if (token->type != TK_RETURN) {
+        return false;
+    }
+    token = token->next;
+    return true;
+}
+
 Token *consume_ident() {
     if (token->type != TK_IDENT) {
         return NULL;
@@ -56,6 +64,10 @@ Token *new_token(TokenType type, Token *cur, char *str, int len) {
     return tok;
 }
 
+int is_alnum(char c) {
+  return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || isdigit(c) || c == '_';
+}
+
 Token *tokenize(char *p) {
     Token head;
     head.next = NULL;
@@ -72,9 +84,12 @@ Token *tokenize(char *p) {
                    *p == '=' || *p == ';') {
             cur = new_token(TK_RESERVED, cur, p, 1);
             p += 1;
+        } else if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])) {
+            cur = new_token(TK_RETURN, cur, p, 6);
+            p += 6;
         } else if ('a' <= *p && *p <= 'z') {
             int i = 1;
-            for (; 'a' <= p[i] && p[i] <= 'z' || 'A' <= p[i] && p[i] <= 'Z' || isdigit(p[i]) || p[i] == '_'; ++i) {}
+            for (; is_alnum(p[i]); ++i) {}
             cur = new_token(TK_IDENT, cur, p, i);
             p += i;
         } else if (isdigit(*p)) {
