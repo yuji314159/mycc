@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 typedef enum {
     TK_RESERVED,
     TK_IDENT,
@@ -58,7 +60,17 @@ extern LVar *locals;
 void error(char *fmt, ...);
 void error_at(char *loc, char *fmt, ...);
 
+bool consume(char *op);
+Token *consume_ident();
+void expect(char *op);
+int expect_number();
+bool at_eof();
+Token *new_token(TokenType type, Token *cur, char *str, int len);
 Token *tokenize(char *p);
+LVar *find_lvar(Token *tok);
+Node *new_node(NodeType type, Node *lhs, Node *rhs);
+Node *new_node_num(int val);
+
 void program();
 
 void gen(Node *node);
