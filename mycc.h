@@ -3,6 +3,10 @@
 typedef enum {
     TK_RESERVED,
     TK_RETURN,
+    TK_IF,
+    TK_ELSE,
+    TK_WHILE,
+    TK_FOR,
     TK_IDENT,
     TK_NUM,
     TK_EOF,
@@ -33,6 +37,7 @@ typedef enum {
     ND_ASSIGN,
     ND_LVAR,
     ND_RETURN,
+    ND_IF,
 } NodeType;
 
 typedef struct Node Node;
@@ -41,8 +46,12 @@ struct Node {
     NodeType type;
     Node *lhs;
     Node *rhs;
+    Node *cond;
+    Node *then;
+    Node *els;
     int val;
     int offset;
+    int label;
 };
 
 typedef struct LVar LVar;
@@ -64,6 +73,8 @@ void error_at(char *loc, char *fmt, ...);
 
 bool consume(char *op);
 bool consume_return();
+bool consume_if();
+bool consume_else();
 Token *consume_ident();
 void expect(char *op);
 int expect_number();

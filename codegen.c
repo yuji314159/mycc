@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "mycc.h"
 
+int label;
+
 void gen_lval(Node *node) {
     if (node->type != ND_LVAR) {
         error("代入の左辺値が変数ではありません");
@@ -38,6 +40,26 @@ void gen(Node *node) {
             printf("    pop rbp\n");
             printf("    ret\n");
             return;
+        case ND_IF: {
+            int l = label++;
+            gen(node->cond);
+            printf("    pop rax\n");
+            printf("    cmp rax, 0\n");
+            if (node->els == NULL) {
+                printf("    je .Lend%03d\n", l);
+                gen(node->then);
+                printf(".Lend%03d:\n", l);
+            } else {
+                printf("    je .Lelse%03d\n", l);
+                gen(node->then);
+                printf("    jmp .Lend%03d\n", l);
+                printf(".Lelse%03d:\n", l);
+                gen(node->els);
+                printf(".Lend%03d:\n", l);
+            }
+            printf("    push rax\n");
+            return;
+        }
     }
 
     gen(node->lhs);

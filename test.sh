@@ -34,5 +34,10 @@ assert 1 "(1 + 2 < 1 * 2) == (2 + 3 > 2 * 3);"
 assert 4 "a = b = 2; a + b;"
 assert 6 "foo = 1; bar = 2 + 3; foo + bar;"
 assert 5 "return 5; return 8;"
+assert 1 "a = 0; if (1 == 1) a = 1; return a;"
+assert 0 "a = 0; if (0 == 1) a = 1; return a;"
+assert 3 "a = 0; if (a == 1) a = 2; else a = 3; return a;"
+assert 1 "a = 1; b = 2; if (a < b) return a; else return b;"
+assert 2 "a = 2; if (a == 0)     return 0; else if (a == 1)     return 1; else if (a == 2)     return 2;"
 
 echo OK

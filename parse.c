@@ -122,13 +122,22 @@ Node *stmt() {
         node = calloc(1, sizeof(Node));
         node->type = ND_RETURN;
         node->lhs = expr();
+        expect(";");
+    } else if (consume_if()) {
+        expect("(");
+        node = calloc(1, sizeof(Node));
+        node->type = ND_IF;
+        node->cond = expr();
+        expect(")");
+        node->then = stmt();
+        if (consume_else()) {
+            node->els = stmt();
+        }
     } else {
         node = expr();
+        expect(";");
     }
 
-    if (!consume(";")) {
-        error_at(token->str, "';' ではないトークンです");
-    }
     return node;
 }
 
