@@ -38,7 +38,9 @@ assert 1 "a = 0; if (1 == 1) a = 1; return a;"
 assert 0 "a = 0; if (0 == 1) a = 1; return a;"
 assert 3 "a = 0; if (a == 1) a = 2; else a = 3; return a;"
 assert 1 "a = 1; b = 2; if (a < b) return a; else return b;"
-assert 2 "a = 2; if (a == 0)     return 0; else if (a == 1)     return 1; else if (a == 2)     return 2;"
+assert 2 "a = 2; if (a == 0) return 0; else if (a == 1) return 1; else if (a == 2) return 2;"
 assert 10 "i = 0; while (i < 10) i = i + 1; return i;"
+assert 10 "i = 0; for (; i < 10;) i = i + 1; return i;"
+assert 55 "sum = 0; for (i = 1; i <= 10; i = i + 1) sum = sum + i; return sum;"
 
 echo OK

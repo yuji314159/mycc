@@ -39,6 +39,7 @@ typedef enum {
     ND_RETURN,
     ND_IF,
     ND_WHILE,
+    ND_FOR,
 } NodeType;
 
 typedef struct Node Node;
@@ -47,12 +48,13 @@ struct Node {
     NodeType type;
     Node *lhs;
     Node *rhs;
+    Node *init;
     Node *cond;
+    Node *inc;
     Node *then;
     Node *els;
     int val;
     int offset;
-    int label;
 };
 
 typedef struct LVar LVar;
@@ -77,6 +79,7 @@ bool consume_return();
 bool consume_if();
 bool consume_else();
 bool consume_while();
+bool consume_for();
 Token *consume_ident();
 void expect(char *op);
 int expect_number();
