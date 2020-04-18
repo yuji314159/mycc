@@ -133,6 +133,13 @@ Node *stmt() {
         if (consume_else()) {
             node->els = stmt();
         }
+    } else if (consume_while()) {
+        expect("(");
+        node = calloc(1, sizeof(Node));
+        node->type = ND_WHILE;
+        node->cond = expr();
+        expect(")");
+        node->then = stmt();
     } else {
         node = expr();
         expect(";");

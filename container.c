@@ -42,6 +42,14 @@ bool consume_else() {
     return true;
 }
 
+bool consume_while() {
+    if (token->type != TK_WHILE) {
+        return false;
+    }
+    token = token->next;
+    return true;
+}
+
 Token *consume_ident() {
     if (token->type != TK_IDENT) {
         return NULL;
@@ -109,6 +117,9 @@ Token *tokenize(char *p) {
         } else if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4])) {
             cur = new_token(TK_ELSE, cur, p, 4);
             p += 4;
+        } else if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])) {
+            cur = new_token(TK_WHILE, cur, p, 5);
+            p += 5;
         } else if ('a' <= *p && *p <= 'z') {
             int i = 1;
             for (; is_alnum(p[i]); ++i) {}
